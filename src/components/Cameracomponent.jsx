@@ -60,9 +60,9 @@ const SingleComponent = () => {
     points.forEach((point, index) => {
       ctx.fillStyle = 'red';
       ctx.beginPath();
-      ctx.arc(point.x, point.y, 10, 0, 2 * Math.PI); // Increase the radius to 10 for better visibility
+      ctx.arc(point.x, point.y, 20, 0, 2 * Math.PI); // Increase the radius to 20 for better visibility
       ctx.fill();
-      ctx.strokeText(index + 1, point.x + 10, point.y + 10);
+      ctx.strokeText(index + 1, point.x + 20, point.y + 20);
     });
 
     if (points.length === 4) {
@@ -158,7 +158,7 @@ const SingleComponent = () => {
           <canvas
             ref={displayCanvasRef}
             onClick={handleClick}
-            onMouseDown={(e) => handleMouseDown(points.findIndex(point => Math.hypot(point.x - (e.clientX - e.target.getBoundingClientRect().left), point.y - (e.clientY - e.target.getBoundingClientRect().top)) < 15))} // Increase the hit area radius to 15
+            onMouseDown={(e) => handleMouseDown(points.findIndex(point => Math.hypot(point.x - (e.clientX - e.target.getBoundingClientRect().left), point.y - (e.clientY - e.target.getBoundingClientRect().top)) < 20))} // Increase the hit area radius to 20
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             style={{ border: '1px solid black' }}
