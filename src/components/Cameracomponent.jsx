@@ -49,6 +49,32 @@ const SingleComponent = () => {
     }
   };
 
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = displayCanvasRef.current.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    setDragging(points.findIndex(point => Math.hypot(point.x - x, point.y - y) < 20));
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault();
+    if (dragging !== -1) {
+      const touch = e.touches[0];
+      const rect = displayCanvasRef.current.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      const newPoints = [...points];
+      newPoints[dragging] = { x, y };
+      setPoints(newPoints);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setDragging(-1);
+  };
+
   const drawImage = () => {
     const displayCanvas = displayCanvasRef.current;
     const ctx = displayCanvas.getContext('2d');
@@ -161,6 +187,9 @@ const SingleComponent = () => {
             onMouseDown={(e) => handleMouseDown(points.findIndex(point => Math.hypot(point.x - (e.clientX - e.target.getBoundingClientRect().left), point.y - (e.clientY - e.target.getBoundingClientRect().top)) < 20))} // Increase the hit area radius to 20
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             style={{ border: '1px solid black' }}
           />
           {points.length === 4 && <button onClick={cropImage}>Crop Image</button>}
