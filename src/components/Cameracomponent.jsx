@@ -4,7 +4,7 @@ import Webcam from 'react-webcam';
 const videoConstraints = {
   width: 400,
   height: 600,
-  facingMode: 'user',
+  facingMode: { exact: "environment" },
 };
 
 const SingleComponent = () => {
@@ -60,7 +60,7 @@ const SingleComponent = () => {
     points.forEach((point, index) => {
       ctx.fillStyle = 'red';
       ctx.beginPath();
-      ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+      ctx.arc(point.x, point.y, 10, 0, 2 * Math.PI); // Increase the radius to 10 for better visibility
       ctx.fill();
       ctx.strokeText(index + 1, point.x + 10, point.y + 10);
     });
@@ -158,7 +158,7 @@ const SingleComponent = () => {
           <canvas
             ref={displayCanvasRef}
             onClick={handleClick}
-            onMouseDown={(e) => handleMouseDown(points.findIndex(point => Math.hypot(point.x - (e.clientX - e.target.getBoundingClientRect().left), point.y - (e.clientY - e.target.getBoundingClientRect().top)) < 10))}
+            onMouseDown={(e) => handleMouseDown(points.findIndex(point => Math.hypot(point.x - (e.clientX - e.target.getBoundingClientRect().left), point.y - (e.clientY - e.target.getBoundingClientRect().top)) < 15))} // Increase the hit area radius to 15
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             style={{ border: '1px solid black' }}
