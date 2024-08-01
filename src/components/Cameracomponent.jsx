@@ -4,7 +4,7 @@ import Webcam from 'react-webcam';
 const videoConstraints = {
   width: 400,
   height: 600,
-  facingMode: { exact: "environment" },
+  facingMode: 'user',
 };
 
 const SingleComponent = () => {
@@ -43,27 +43,6 @@ const SingleComponent = () => {
       const rect = displayCanvasRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      const newPoints = [...points];
-      newPoints[dragging] = { x, y };
-      setPoints(newPoints);
-    }
-  };
-
-  const handleTouchStart = (index) => (e) => {
-    e.preventDefault();
-    setDragging(index);
-  };
-
-  const handleTouchEnd = (e) => {
-    e.preventDefault();
-    setDragging(-1);
-  };
-
-  const handleTouchMove = (e) => {
-    if (dragging !== -1) {
-      const rect = displayCanvasRef.current.getBoundingClientRect();
-      const x = e.touches[0].clientX - rect.left;
-      const y = e.touches[0].clientY - rect.top;
       const newPoints = [...points];
       newPoints[dragging] = { x, y };
       setPoints(newPoints);
@@ -182,9 +161,6 @@ const SingleComponent = () => {
             onMouseDown={(e) => handleMouseDown(points.findIndex(point => Math.hypot(point.x - (e.clientX - e.target.getBoundingClientRect().left), point.y - (e.clientY - e.target.getBoundingClientRect().top)) < 15))} // Increase the hit area radius to 15
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
-            onTouchStart={(e) => handleTouchStart(points.findIndex(point => Math.hypot(point.x - (e.touches[0].clientX - e.target.getBoundingClientRect().left), point.y - (e.touches[0].clientY - e.target.getBoundingClientRect().top)) < 15))(e)}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
             style={{ border: '1px solid black' }}
           />
           {points.length === 4 && <button onClick={cropImage}>Crop Image</button>}
