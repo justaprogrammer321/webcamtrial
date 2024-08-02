@@ -4,7 +4,7 @@ import Webcam from 'react-webcam';
 const videoConstraints = {
   width: 400,
   height: 600,
-  facingMode: 'user',
+  facingMode: { exact: "environment" }
 };
 
 const SingleComponent = () => {
@@ -112,7 +112,21 @@ const SingleComponent = () => {
 
   const cropImage = () => {
     const displayCanvas = displayCanvasRef.current;
+    const ctx = displayCanvas.getContext('2d');
     const [p1, p2, p3, p4] = points;
+
+    // Save current styles
+    const savedPointsColor = points.map(() => ctx.fillStyle);
+    const savedStrokeStyle = ctx.strokeStyle;
+    const savedFillStyle = ctx.fillStyle;
+
+    // Set points and blue filter to transparent
+    ctx.fillStyle = 'transparent';
+    ctx.strokeStyle = 'transparent';
+
+    // Redraw image without points and blue filter
+    ctx.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
+    ctx.drawImage(imgRef.current, 0, 0, imgRef.current.width, imgRef.current.height);
 
     const croppedCanvas = document.createElement('canvas');
     const croppedCtx = croppedCanvas.getContext('2d');
@@ -154,6 +168,31 @@ const SingleComponent = () => {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+
+      // Restore original styles
+      points.forEach((point, index) => {
+        ctx.fillStyle = savedPointsColor[index];
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 20, 0, 2 * Math.PI); // Increase the radius to 20 for better visibility
+        ctx.fill();
+        ctx.strokeText(index + 1, point.x + 20, point.y + 20);
+      });
+
+      if (points.length === 4) {
+        const [p1, p2, p3, p4] = points;
+        ctx.strokeStyle = savedStrokeStyle;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.lineTo(p3.x, p3.y);
+        ctx.lineTo(p4.x, p4.y);
+        ctx.closePath();
+        ctx.stroke();
+
+        ctx.fillStyle = savedFillStyle;
+        ctx.fill();
+      }
     });
   };
 
