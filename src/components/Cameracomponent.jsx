@@ -14,11 +14,13 @@ const SingleComponent = () => {
   const [imgSrc, setImgSrc] = useState(null);
   const [points, setPoints] = useState([]);
   const [dragging, setDragging] = useState(-1);
+  const [cameraOn, setCameraOn] = useState(true);
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
     setPoints([]);
+    setCameraOn(false); // Turn off the camera preview
   }, [webcamRef, setImgSrc]);
 
   const handleClick = (e) => {
@@ -155,6 +157,10 @@ const SingleComponent = () => {
     });
   };
 
+  const clearPoints = () => {
+    setPoints([]);
+  };
+
   useEffect(() => {
     if (imgSrc) {
       drawImage();
@@ -163,15 +169,17 @@ const SingleComponent = () => {
 
   return (
     <>
-      <Webcam
-        audio={false}
-        ref={webcamRef}
-        screenshotFormat="image/jpeg"
-        videoConstraints={videoConstraints}
-        minScreenshotWidth={400}
-        minScreenshotHeight={600}
-      />
-      <button onClick={capture}>Capture Photo</button>
+      {cameraOn ? (
+        <Webcam
+          audio={false}
+          ref={webcamRef}
+          screenshotFormat="image/jpeg"
+          videoConstraints={videoConstraints}
+          minScreenshotWidth={400}
+          minScreenshotHeight={600}
+        />
+      ) : null}
+      {cameraOn && <button onClick={capture}>Capture Photo</button>}
       {imgSrc && (
         <>
           <img
@@ -192,6 +200,7 @@ const SingleComponent = () => {
             onTouchEnd={handleTouchEnd}
             style={{ border: '1px solid black' }}
           />
+          <button onClick={clearPoints} style={{ marginTop: '10px' }}>Clear Points</button>
           {points.length === 4 && <button onClick={cropImage}>Crop Image</button>}
         </>
       )}
